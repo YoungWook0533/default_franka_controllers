@@ -1,0 +1,20 @@
+<library path="kyu_franka_controllers">
+    <class name="kyu_franka_controllers/DefaultController" 
+           type="kyu_franka_controllers::DefaultController" base_class_type="controller_interface::ControllerInterface">
+        <description>
+            Base controller for joint position control
+        </description>
+  </class>
+  <class name="kyu_franka_controllers/TestPositionController"
+         type="kyu_franka_controllers::TestPositionController" base_class_type="controller_interface::ControllerInterface">
+    <description>Auto-generated controller</description>
+  </class>
+  <class name="kyu_franka_controllers/TestVelocityController"
+         type="kyu_franka_controllers::TestVelocityController" base_class_type="controller_interface::ControllerInterface">
+    <description>Auto-generated controller</description>
+  </class>
+  <class name="kyu_franka_controllers/TestEffortController"
+         type="kyu_franka_controllers::TestEffortController" base_class_type="controller_interface::ControllerInterface">
+    <description>Auto-generated controller</description>
+  </class>
+</library>
