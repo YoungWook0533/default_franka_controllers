@@ -161,6 +161,12 @@ controller_interface::CallbackReturn DefaultController::on_deactivate(const rclc
 
 controller_interface::return_type DefaultController::update(const rclcpp::Time& /*time*/, const rclcpp::Duration& /*period*/) 
 {
+  static int print_count = 0;
+  double timer = bench_timer_.elapsedAndReset() * 1000.0;
+  if ((print_count++ % 200) == 0) {
+    std::cout << "update dt: " << timer << " ms" << std::endl;
+  }
+
   update_joint_states();
   updateRobotData();
 
@@ -186,14 +192,14 @@ controller_interface::return_type DefaultController::update(const rclcpp::Time& 
     command_interfaces_[i].set_value(command[i]);
   }
 
-  static int print_count = 0;
+  // static int print_count = 0;
 
-  if ((print_count++ % 200) == 0) {
-    // std::cout << "J_from_getEEJac (Pinocchio LWA):\n" << J_from_q_desired << std::endl;
-    // std::cout << "J_ (ZeroJacobian):\n" << J_ << std::endl;
-    std::cout << "x_:\n" << x_ << std::endl;
-    std::cout << "x2_:\n" << x2_ << std::endl;
-  }
+  // if ((print_count++ % 200) == 0) {
+  //   // std::cout << "J_from_getEEJac (Pinocchio LWA):\n" << J_from_q_desired << std::endl;
+  //   // std::cout << "J_ (ZeroJacobian):\n" << J_ << std::endl;
+  //   std::cout << "x_:\n" << x_ << std::endl;
+  //   std::cout << "x2_:\n" << x2_ << std::endl;
+  // }
 
   return controller_interface::return_type::OK;
 }
@@ -229,11 +235,9 @@ void DefaultController::asyncCalculationProc()
     x2_local = x2_;
   }
 
-  static Eigen::Vector7d q_init_local, qdot_init_local;
-
   if (initialization_flag_ || is_mode_changed_) {
-    q_init_local = q_local;
-    qdot_init_local = qdot_local;
+    q_init_ = q_local;
+    qdot_init_ = qdot_local;
     x_init_ = x_local;
     x2_init_ = x2_local;
     control_start_time_ = play_time_;
@@ -248,7 +252,7 @@ void DefaultController::asyncCalculationProc()
   // Eigen::Vector7d q_des_local = DyrosMath::cubicVector<7>(play_time_,
   //                                                         control_start_time_,
   //                                                         control_start_time_ + 4,
-  //                                                         q_init_local,
+  //                                                         q_init_,
   //                                                         home_q,
   //                                                         Eigen::Vector7d::Zero(),
   //                                                         Eigen::Vector7d::Zero());
@@ -282,11 +286,68 @@ void DefaultController::asyncCalculationProc()
   // x_target.block(0,3,3,1) << 0.25, 0.28, 0.65;
   // HW2_3(x_target, 10.0);
 
-  // ============================================ HW3_1 ============================================
-  Eigen::Vector3d x1_target, x2_target;
-  x1_target << 0.35, 0.28, 0.7;
-  x2_target << 0., -0.15, 0.5;
-  HW3_1(x1_target, x2_target, 10.0);
+  // // ============================================ HW3_1 ============================================
+  // Eigen::Vector3d x1_target, x2_target;
+  // x1_target << 0.35, 0.28, 0.7;
+  // x2_target << 0., -0.15, 0.5;
+  // HW3_1(x1_target, x2_target, 10.0);
+
+  // // ============================================ HW3_2 ============================================
+  // Eigen::Vector3d x1_target, x2_target;
+  // x1_target << 0.35, 0.28, 0.7;
+  // x2_target << 0., -0.15, 0.5;
+  // HW3_2(x1_target, x2_target, 10.0);
+
+  // // ============================================ HW4_1 ============================================
+  // HW4_1();
+
+  // // ============================================ HW4_2 ============================================
+  // // DON'T ACTIVATE THIS
+  // Eigen::Vector7d q_target;
+  // q_target << 0.0, 0.0, 0.0, -25*DEG2RAD, 0.0, 90*DEG2RAD, 0.;
+  // HW4_2(q_target);
+
+  // // ============================================ HW4_3_1 ============================================
+  // Eigen::Vector7d q_target;
+  // q_target << 0.0, 0.0, 0.0, -25*DEG2RAD, 0.0, 90*DEG2RAD, 0.;
+  // HW4_3_1(q_target);
+
+  // // ============================================ HW4_3_2 ============================================
+  // Eigen::Vector7d q_target;
+  // q_target << 0.0, 0.0, 0.0, -60*DEG2RAD, 0.0, 90*DEG2RAD, 0.;
+  // HW4_3_2(q_target, 4.0);
+
+  // // ============================================ HW4_4_1 ============================================
+  // Eigen::Vector7d q_target;
+  // q_target << 0.0, 0.0, 0.0, -25*DEG2RAD, 0.0, 90*DEG2RAD, 0.;
+  // HW4_4_1(q_target);
+
+  // // ============================================ HW4_4_2 ============================================
+  // Eigen::Vector7d q_target;
+  // q_target << 0.0, 0.0, 0.0, -60*DEG2RAD, 0.0, 90*DEG2RAD, 0.;
+  // HW4_4_2(q_target, 4.0);
+
+  // // ============================================ HW5_1_1 ============================================
+  // Eigen::Matrix4d x_target;
+  // x_target.setIdentity();
+  // x_target = x_init_;
+  // x_target(1, 3) += 0.02;
+  // HW5_1_1(x_target);
+
+  // // ============================================ HW5_1_2 ============================================
+  // Eigen::Matrix4d x_target;
+  // x_target.setIdentity();
+  // x_target = x_init_;
+  // x_target.block(0,3,3,1) << 0.3, -0.012, 0.52;
+  // // x_target(1, 3) += 0.10;
+  // HW5_1_2(x_target, 10.0);
+
+  // ============================================ HW6 ============================================
+  Eigen::Matrix4d x_target;
+  x_target.setIdentity();
+  x_target = x_init_;
+  x_target.block(0,3,3,1) << 0.3, -0.012, 0.52;
+  HW6(x_target, 10.0);
 }
 
 // ================================================================================================
@@ -340,7 +401,7 @@ void DefaultController::updateRobotData()
     // M_task_ = (J_ * M_inv_ * J_.transpose()).inverse();
     // J_T_inv_ = M_task_ * J_ * M_inv_;
     // g_task_ = J_T_inv_ * g_;
-    // g_pin_ = getGravity(q_);
+    g_pin_ = getGravity(q_);
   }
   // std::cout << "current_pose :" << x_ << std::endl;
 }
@@ -467,6 +528,7 @@ void DefaultController::JointPDControl(const Eigen::Vector7d target_q)
 // ============================================= HW ===============================================
 // ================================================================================================	
 
+// ============================================ HW2 ============================================
 void DefaultController::HW2_1(const Eigen::Matrix4d x_target, const double duration)
 {
   Eigen::Vector6d xdot_desired;
@@ -479,7 +541,7 @@ void DefaultController::HW2_1(const Eigen::Matrix4d x_target, const double durat
                                                       Eigen::VectorXd::Zero(3));
   xdot_desired.tail(3).setZero();
   Eigen::MatrixXd J_from_q_desired = getEEJac(q_desired_);
-  double lambda = 0.01;
+  double lambda = 0.1;
   Eigen::MatrixXd J_pinv = J_from_q_desired.transpose() * (J_from_q_desired * J_from_q_desired.transpose() + lambda * lambda * Eigen::MatrixXd::Identity(6,6)).inverse();
     
   // Eigen::MatrixXd J_pinv = J_.transpose() * (J_ * J_.transpose()).inverse();
@@ -522,7 +584,7 @@ void DefaultController::HW2_2(const Eigen::Matrix4d x_target, const double durat
     Kp_diag << 5, 5, 5, 1, 1, 1;
 
     Eigen::MatrixXd J_from_q_desired = getEEJac(q_desired_);
-    double lambda = 0.01;
+    double lambda = 0.1;
     Eigen::MatrixXd J_pinv = J_from_q_desired.transpose() * (J_from_q_desired * J_from_q_desired.transpose() + lambda * lambda * Eigen::MatrixXd::Identity(6,6)).inverse();
 
     Eigen::VectorXd qdot_desired = J_pinv * (xdot_desired + Kp_diag.asDiagonal() * x_error);
@@ -567,7 +629,7 @@ void DefaultController::HW2_3(const Eigen::Matrix4d x_target, const double durat
     Winv_diag << 1, 1, 1, 0.001, 1, 1, 1;
 
     Eigen::MatrixXd J_from_q_desired = getEEJac(q_desired_);
-    double lambda = 0.01;
+    double lambda = 0.1;
     Eigen::MatrixXd J_pinv = J_from_q_desired.transpose() * (J_from_q_desired * J_from_q_desired.transpose() + lambda * lambda * Eigen::MatrixXd::Identity(6,6)).inverse();
 
     Eigen::VectorXd qdot_desired = J_pinv * (xdot_desired + Kp_diag.asDiagonal() * x_error);
@@ -576,6 +638,7 @@ void DefaultController::HW2_3(const Eigen::Matrix4d x_target, const double durat
     JointPDControl(q_desired_); 
 }
 
+// ============================================ HW3 ============================================
 void DefaultController::HW3_1(const Eigen::Vector3d x1_target, const Eigen::Vector3d x2_target, const double duration)
 {
     Eigen::Vector6d x_desired;
@@ -621,13 +684,310 @@ void DefaultController::HW3_1(const Eigen::Vector3d x1_target, const Eigen::Vect
     J_from_q_desired.block(0,0,3,7) = getEEJac(q_desired_).block(0,0,3,7);
     J_from_q_desired.block(3,0,3,7) = getLinkJac(q_desired_, link_names_[4]).block(0,0,3,7);
 
-    double lambda = 0.01;
+    double lambda = 0.1;
     Eigen::MatrixXd J_pinv = J_from_q_desired.transpose() * (J_from_q_desired * J_from_q_desired.transpose() + lambda * lambda * Eigen::MatrixXd::Identity(6,6)).inverse();
 
     Eigen::VectorXd qdot_desired = J_pinv * (xdot_desired + Kp_diag.asDiagonal() * x_error);
     q_desired_ += qdot_desired * dt_;
 
     JointPDControl(q_desired_); 
+}
+
+void DefaultController::HW3_2(const Eigen::Vector3d x1_target, const Eigen::Vector3d x2_target, const double duration)
+{
+    Eigen::Vector6d x_desired;
+    x_desired.head(3) = DyrosMath::cubicVector<3>(play_time_,
+                                                  control_start_time_,
+                                                  control_start_time_+duration,
+                                                  x_init_.block(0,3,3,1),
+                                                  x1_target,
+                                                  Eigen::VectorXd::Zero(3),
+                                                  Eigen::VectorXd::Zero(3));
+    x_desired.tail(3) = DyrosMath::cubicVector<3>(play_time_,
+                                                  control_start_time_,
+                                                  control_start_time_+duration,
+                                                  x2_init_.block(0,3,3,1),
+                                                  x2_target,
+                                                  Eigen::VectorXd::Zero(3),
+                                                  Eigen::VectorXd::Zero(3));
+    Eigen::Vector6d xdot_desired;
+    xdot_desired.head(3) = DyrosMath::cubicDotVector<3>(play_time_,
+                                                        control_start_time_,
+                                                        control_start_time_+duration,
+                                                        x_init_.block(0,3,3,1),
+                                                        x1_target,
+                                                        Eigen::VectorXd::Zero(3),
+                                                        Eigen::VectorXd::Zero(3));
+    xdot_desired.tail(3) = DyrosMath::cubicDotVector<3>(play_time_,
+                                                        control_start_time_,
+                                                        control_start_time_+duration,
+                                                        x2_init_.block(0,3,3,1),
+                                                        x2_target,
+                                                        Eigen::VectorXd::Zero(3),
+                                                        Eigen::VectorXd::Zero(3));
+
+    Eigen::Vector6d x_from_q_desired;
+    x_from_q_desired << getEEPose(q_desired_).block(0,3,3,1), getLinkPose(q_desired_, link_names_[4]).block(0,3,3,1);
+
+    Eigen::Vector6d x_error = x_desired - x_from_q_desired;
+
+    Eigen::Vector6d Kp_diag;
+    Kp_diag << 100, 100, 100, 100, 100, 100;
+    
+    Eigen::Vector6d xdot_CLIK = (xdot_desired + Kp_diag.asDiagonal() * x_error);
+    Eigen::Vector3d x1dot_CLIK, x2dot_CLIK;
+    x1dot_CLIK = xdot_CLIK.head(3);
+    x2dot_CLIK = xdot_CLIK.tail(3);
+    
+    Eigen::Matrix<double,3,7> J1_from_q_desired, J2_from_q_desired;
+    J1_from_q_desired = getEEJac(q_desired_).block(0,0,3,7);
+    J2_from_q_desired = getLinkJac(q_desired_, link_names_[4]).block(0,0,3,7);
+    // std::cout << "J2_from_q_desired\n" << J2_from_q_desired << std::endl;
+
+    Eigen::Matrix<double,7,3> J1_pinv = J1_from_q_desired.transpose() * (J1_from_q_desired * J1_from_q_desired.transpose()).inverse();
+    Eigen::Matrix<double,7,3> J2_pinv = J2_from_q_desired.transpose() * (J2_from_q_desired * J2_from_q_desired.transpose() + 0.01*Eigen::Matrix3d::Identity()).inverse();
+    // std::cout << "J1_pinv\n" << J1_pinv << std::endl;
+    // std::cout << "J2_pinv\n" << J2_pinv << std::endl;
+    Eigen::Matrix7d N1 = Eigen::Matrix7d::Identity() - J1_pinv * J1_from_q_desired;
+    // std::cout << "N1\n" << N1 << std::endl;
+    
+    Eigen::Vector7d qdot_desired_2d_1 = J2_pinv * (x2dot_CLIK - J2_from_q_desired * J1_pinv * x1dot_CLIK);
+    // std::cout << "qdot_desired_2d_1 :" << qdot_desired_2d_1.transpose() << std::endl;
+
+    Eigen::Vector7d qdot_desired = J1_pinv * x1dot_CLIK + N1 * qdot_desired_2d_1;
+    q_desired_ += qdot_desired * dt_;
+
+    JointPDControl(q_desired_); 
+}
+
+// ============================================ HW4 ============================================
+void DefaultController::HW4_1()
+{
+    torque_desired_ = -g_+g_pin_;
+}
+
+// DON'T ACTIVATE THIS
+void DefaultController::HW4_2(const Eigen::Vector7d q_target)
+{
+    Eigen::Vector7d Kp_diag, Kv_diag;
+    Kp_diag << 5, 5, 5, 5, 5, 5, 5;
+    Kv_diag << 1, 1, 1, 1, 1, 1, 1;
+
+    q_desired_ = q_target;
+
+    torque_desired_ = Kp_diag.asDiagonal() * (q_desired_ - q_) + Kv_diag.asDiagonal() * (-qdot_) - g_;
+}
+
+void DefaultController::HW4_3_1(const Eigen::Vector7d q_target)
+{
+    Eigen::Vector7d Kp_diag, Kv_diag;
+    Kp_diag << 5, 5, 5, 5, 5, 5, 5;
+    Kv_diag << 1, 1, 1, 1, 1, 1, 1;
+
+    q_desired_ = q_target;
+
+    torque_desired_ = Kp_diag.asDiagonal() * (q_desired_ - q_) + Kv_diag.asDiagonal() * (-qdot_);
+}
+
+void DefaultController::HW4_3_2(const Eigen::Vector7d q_target, const double duration)
+{
+    Eigen::Vector7d Kp_diag, Kv_diag;
+    Kp_diag << 600, 600, 600, 600, 250, 150, 50;
+    Kv_diag << 30, 30, 30, 30, 10, 10, 5;
+
+    q_desired_ = DyrosMath::cubicVector<7>(play_time_,
+                                           control_start_time_,
+                                           control_start_time_+duration,
+                                           q_init_,
+                                           q_target,
+                                           Eigen::Vector7d::Zero(),
+                                           Eigen::Vector7d::Zero());
+
+    Eigen::Vector7d qdot_desired = DyrosMath::cubicDotVector<7>(play_time_,
+                                                         control_start_time_,
+                                                         control_start_time_+duration,
+                                                         q_init_,
+                                                         q_target,
+                                                         Eigen::Vector7d::Zero(),
+                                                         Eigen::Vector7d::Zero());
+
+    torque_desired_ = Kp_diag.asDiagonal() * (q_desired_ - q_) + Kv_diag.asDiagonal() * (qdot_desired - qdot_);
+}
+
+void DefaultController::HW4_4_1(const Eigen::Vector7d q_target)
+{
+    Eigen::Vector7d Kp_diag, Kv_diag;
+    Kp_diag << 5, 5, 5, 5, 5, 5, 5;
+    Kv_diag << 1, 1, 1, 1, 1, 1, 1;
+
+    q_desired_ = q_target;
+
+    torque_desired_ = M_ * (Kp_diag.asDiagonal() * (q_desired_ - q_) + Kv_diag.asDiagonal() * (-qdot_));
+}
+
+void DefaultController::HW4_4_2(const Eigen::Vector7d q_target, const double duration)
+{
+    Eigen::Vector7d Kp_diag, Kv_diag;
+    Kp_diag << 600, 600, 600, 600, 250, 150, 50;
+    Kv_diag << 30, 30, 30, 30, 10, 10, 5;
+
+    q_desired_ = DyrosMath::cubicVector<7>(play_time_,
+                                           control_start_time_,
+                                           control_start_time_+duration,
+                                           q_init_,
+                                           q_target,
+                                           Eigen::Vector7d::Zero(),
+                                           Eigen::Vector7d::Zero());
+
+    Eigen::Vector7d qdot_desired = DyrosMath::cubicDotVector<7>(play_time_,
+                                                         control_start_time_,
+                                                         control_start_time_+duration,
+                                                         q_init_,
+                                                         q_target,
+                                                         Eigen::Vector7d::Zero(),
+                                                         Eigen::Vector7d::Zero());
+
+    torque_desired_ = M_ * (Kp_diag.asDiagonal() * (q_desired_ - q_) + Kv_diag.asDiagonal() * (qdot_desired - qdot_));
+}
+
+// ============================================ HW5 ============================================
+void DefaultController::HW5_1_1(const Eigen::Matrix4d x_target)
+{
+    Eigen::Matrix4d x_desired;
+    x_desired.setIdentity();
+    x_desired = x_target;
+
+    Eigen::Vector6d xdot_desired;
+    xdot_desired.setZero();
+
+    Eigen::Vector6d x_error, xdot_error;
+    x_error.head(3) = x_desired.block(0,3,3,1) - x_.block(0,3,3,1);
+    x_error.tail(3) = -DyrosMath::getPhi(x_.block(0,0,3,3), x_desired.block(0,0,3,3));
+    xdot_error = xdot_desired - xdot_;
+    
+    Eigen::Vector6d Kp_diag, Kv_diag;
+    Kp_diag << 100, 100, 100, 100, 100, 100;
+    Kv_diag << 10, 10, 10, 10, 10, 10;
+
+    Eigen::Vector6d Fstar;
+    Fstar = Kp_diag.asDiagonal() * x_error + Kv_diag.asDiagonal() * xdot_error;
+
+    Eigen::Vector7d Kp_joint_diag, Kv_joint_diag;
+    Kp_joint_diag << 600, 600, 600, 600, 250, 150, 50;
+    Kv_joint_diag << 30, 30, 30, 30, 10, 10, 5;
+
+    Eigen::Vector7d tau_null = M_ * (Kp_joint_diag.asDiagonal() * (q_init_ - q_) + Kv_joint_diag.asDiagonal() * (-qdot_));
+
+    Eigen::Matrix7d M_inv = M_.inverse();
+    Eigen::Matrix6d M_task = (J_ * M_inv * J_.transpose()).inverse();
+    Eigen::Matrix<double, 6, 7> J_T_pinv = M_task * J_ * M_inv;
+    
+    torque_desired_ = J_.transpose() * M_task * Fstar + (Eigen::Matrix7d::Identity() - J_.transpose() * J_T_pinv) * tau_null;
+}
+
+void DefaultController::HW5_1_2(const Eigen::Matrix4d x_target, const double duration)
+{
+    Eigen::Matrix4d x_desired;
+    x_desired.setIdentity();
+    x_desired.block(0,3,3,1) = DyrosMath::cubicVector<3>(play_time_,
+                                                         control_start_time_,
+                                                         control_start_time_+duration,
+                                                         x_init_.block(0,3,3,1),
+                                                         x_target.block(0,3,3,1),
+                                                         Eigen::VectorXd::Zero(3),
+                                                         Eigen::VectorXd::Zero(3));
+    x_desired.block(0,0,3,3) = x_target.block(0,0,3,3);
+
+    Eigen::Vector6d xdot_desired;
+    xdot_desired.head(3) = DyrosMath::cubicDotVector<3>(play_time_,
+                                                        control_start_time_,
+                                                        control_start_time_+duration,
+                                                        x_init_.block(0,3,3,1),
+                                                        x_target.block(0,3,3,1),
+                                                        Eigen::VectorXd::Zero(3),
+                                                        Eigen::VectorXd::Zero(3));
+    xdot_desired.tail(3).setZero();
+
+    Eigen::Vector6d x_error, xdot_error;
+    x_error.head(3) = x_desired.block(0,3,3,1) - x_.block(0,3,3,1);
+    x_error.tail(3) = -DyrosMath::getPhi(x_.block(0,0,3,3), x_desired.block(0,0,3,3));
+    xdot_error = xdot_desired - xdot_;
+    
+    Eigen::Vector6d Kp_diag, Kv_diag;
+    Kp_diag << 800, 800, 800, 50, 50, 50;
+    Kv_diag << 40, 40, 40, 20, 20, 20;
+
+    Eigen::Vector6d Fstar;
+    Fstar = Kp_diag.asDiagonal() * x_error + Kv_diag.asDiagonal() * xdot_error;
+
+    Eigen::Vector7d Kp_joint_diag, Kv_joint_diag;
+    Kp_joint_diag << 10, 10, 10, 10, 10, 10, 10;
+    Kv_joint_diag << 1, 1, 1, 1, 1, 1, 1;
+
+    Eigen::Vector7d tau_null = M_ * (Kp_joint_diag.asDiagonal() * (q_init_ - q_) + Kv_joint_diag.asDiagonal() * (-qdot_));
+
+    Eigen::Matrix7d M_inv = M_.inverse();
+    Eigen::Matrix6d M_task = (J_ * M_inv * J_.transpose()).inverse();
+    Eigen::Matrix<double, 6, 7> J_T_pinv = M_task * J_ * M_inv;
+    
+    torque_desired_ = J_.transpose() * Fstar + c_ + (Eigen::Matrix7d::Identity() - J_.transpose() * J_T_pinv) * tau_null;
+}
+
+// ============================================ HW6 ============================================
+void DefaultController::HW6(const Eigen::Matrix4d x_target, const double duration)
+{
+    Eigen::Matrix4d x_desired;
+    x_desired.setIdentity();
+    x_desired.block(0,3,3,1) = DyrosMath::cubicVector<3>(play_time_,
+                                                         control_start_time_,
+                                                         control_start_time_+duration,
+                                                         x_init_.block(0,3,3,1),
+                                                         x_target.block(0,3,3,1),
+                                                         Eigen::VectorXd::Zero(3),
+                                                         Eigen::VectorXd::Zero(3));
+    x_desired.block(0,0,3,3) = x_target.block(0,0,3,3);
+
+    Eigen::Vector6d Kp_diag, Kv_diag, Kp_Kv_diag;
+    Kp_diag << 800, 800, 800, 50, 50, 50;
+    Kv_diag << 40, 40, 40, 20, 20, 20;
+    Kp_Kv_diag = Kp_diag.array() / Kv_diag.array();
+
+    Eigen::Vector6d x_error;
+    x_error.head(3) = x_desired.block(0,3,3,1) - x_.block(0,3,3,1);
+    x_error.tail(3) = -DyrosMath::getPhi(x_.block(0,0,3,3), x_desired.block(0,0,3,3));
+
+    double xdot_max = 0.3;
+
+    Eigen::Vector6d xdot_desired;
+    if((Kp_Kv_diag.head(3).asDiagonal() * x_error.head(3)).norm() < xdot_max) xdot_desired.head(3) = Kp_Kv_diag.head(3).asDiagonal() * x_error.head(3);
+    else xdot_desired.head(3) =x_error.head(3).normalized() * xdot_max;
+    xdot_desired.tail(3).setZero();
+
+    Eigen::Vector6d Fstar;
+    Fstar.head(3) = Kv_diag.head(3).asDiagonal() * (xdot_desired.head(3) - xdot_.head(3));
+    Fstar.tail(3) = Kp_diag.tail(3).asDiagonal() * x_error.tail(3) - Kv_diag.tail(3).asDiagonal() * xdot_.tail(3);
+
+    Eigen::Vector3d x_obs;
+	  x_obs << 0.15, -0.012, 0.65; 
+	  double dist_obs, dist_0, k_obs;
+	  dist_obs = (x_.block(0,3,3,1) - x_obs).norm();
+    dist_obs -= 0.1; // Obs radius
+	  dist_0 = 0.15;
+	  k_obs = 0.1;
+	  Eigen::Vector3d rep_force = k_obs * (1/dist_obs - 1/dist_0) * pow(dist_obs, -3) * (x_.block(0,3,3,1) - x_obs);
+    Fstar.head(3) += rep_force;
+
+    Eigen::Vector7d Kp_joint_diag, Kv_joint_diag;
+    Kp_joint_diag << 10, 10, 10, 10, 10, 10, 10;
+    Kv_joint_diag << 1, 1, 1, 1, 1, 1, 1;
+
+    Eigen::Vector7d tau_null = M_ * (Kp_joint_diag.asDiagonal() * (q_init_ - q_) + Kv_joint_diag.asDiagonal() * (-qdot_));
+
+    Eigen::Matrix7d M_inv = M_.inverse();
+    Eigen::Matrix6d M_task = (J_ * M_inv * J_.transpose()).inverse();
+    Eigen::Matrix<double, 6, 7> J_T_pinv = M_task * J_ * M_inv;
+    
+    torque_desired_ = J_.transpose() * Fstar + c_ + (Eigen::Matrix7d::Identity() - J_.transpose() * J_T_pinv) * tau_null;
 }
 
 }  // namespace kyu_franka_controllers

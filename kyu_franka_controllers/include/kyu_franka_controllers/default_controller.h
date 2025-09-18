@@ -172,6 +172,16 @@ class DefaultController : public controller_interface::ControllerInterface {
   void HW2_2(const Eigen::Matrix4d x_target, const double duration);
   void HW2_3(const Eigen::Matrix4d x_target, const double duration);
   void HW3_1(const Eigen::Vector3d x1_target, const Eigen::Vector3d x2_target, const double duration);
+  void HW3_2(const Eigen::Vector3d x1_target, const Eigen::Vector3d x2_target, const double duration);
+  void HW4_1();
+  void HW4_2(const Eigen::Vector7d q_target);
+  void HW4_3_1(const Eigen::Vector7d q_target);
+  void HW4_3_2(const Eigen::Vector7d q_target, const double duration);
+  void HW4_4_1(const Eigen::Vector7d q_target);
+  void HW4_4_2(const Eigen::Vector7d q_target, const double duration);
+  void HW5_1_1(const Eigen::Matrix4d x_target);
+  void HW5_1_2(const Eigen::Matrix4d x_target, const double duration);
+  void HW6(const Eigen::Matrix4d x_target, const double duration);
 };
 
 }  // namespace kyu_franka_controllers
