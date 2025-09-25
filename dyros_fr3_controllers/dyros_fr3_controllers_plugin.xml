@@ -1,0 +1,20 @@
+<library path="dyros_fr3_controllers">
+    <class name="dyros_fr3_controllers/DefaultController" 
+           type="dyros_fr3_controllers::DefaultController" base_class_type="controller_interface::ControllerInterface">
+        <description>
+            Base controller for joint torque control
+        </description>
+  </class>
+  <class name="dyros_fr3_controllers/TestPositionController"
+         type="dyros_fr3_controllers::TestPositionController" base_class_type="controller_interface::ControllerInterface">
+    <description>Auto-generated controller</description>
+  </class>
+  <class name="dyros_fr3_controllers/TestVelocityController"
+         type="dyros_fr3_controllers::TestVelocityController" base_class_type="controller_interface::ControllerInterface">
+    <description>Auto-generated controller</description>
+  </class>
+  <class name="dyros_fr3_controllers/TestEffortController"
+         type="dyros_fr3_controllers::TestEffortController" base_class_type="controller_interface::ControllerInterface">
+    <description>Auto-generated controller</description>
+  </class>
+</library>

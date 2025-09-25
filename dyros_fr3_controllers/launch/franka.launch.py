@@ -105,7 +105,7 @@ def generate_robot_nodes(context):
 
     namespace = LaunchConfiguration('namespace').perform(context)
     controllers_yaml = PathJoinSubstitution([
-        FindPackageShare('kyu_franka_controllers'), 'config', "controllers.yaml"
+        FindPackageShare('dyros_fr3_controllers'), 'config', "controllers.yaml"
     ]).perform(context)
 
     joint_state_publisher_sources = ['franka/joint_states', 'franka_gripper/joint_states']
