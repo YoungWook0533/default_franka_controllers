@@ -10,11 +10,11 @@ source install/setup.bash
 ### Run
 - Launch example.launch.py with controller_name argument set
 ```bash
-ros2 launch kyu_franka_controllers example.launch.py controller_name:=default_controller
+ros2 launch dyros_fr3_controllers example.launch.py controller_name:=default_controller
 ```
 ```
     'robot_config_file',
-    default_value=PathJoinSubstitution([FindPackageShare('kyu_franka_controllers'), 'config', 'franka.config.yaml']),
+    default_value=PathJoinSubstitution([FindPackageShare('dyros_fr3_controllers'), 'config', 'franka.config.yaml']),
     description='Path to the robot configuration file to load',
 
     'controller_name',

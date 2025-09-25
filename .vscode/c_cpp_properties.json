@@ -1,0 +1,24 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/dyros_fr3_controllers/include",
+                "/usr/include/eigen3",
+                "/opt/ros/humble/include/**",
+                "/opt/ros/humble/include/ament_index_cpp",
+                "/opt/ros/humble/include/pinocchio/**",
+                "/opt/ros/humble/include",
+                "/home/dyros/ros2_ws/install/**",
+                "/home/dyros/ros2_ws/install/franka_semantic_components/**"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "gnu11",
+            "cppStandard": "c++14",
+            "intelliSenseMode": "gcc-x64"
+        }
+    ],
+    "version": 4
+}

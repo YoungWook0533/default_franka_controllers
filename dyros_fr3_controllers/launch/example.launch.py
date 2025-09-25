@@ -56,8 +56,8 @@ from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
 # Add the path to the `utils` folder
-package_share = get_package_share_directory('kyu_franka_controllers')
-utils_path = os.path.join(package_share, '..', '..', 'lib', 'kyu_franka_controllers', 'utils')
+package_share = get_package_share_directory('dyros_fr3_controllers')
+utils_path = os.path.join(package_share, '..', '..', 'lib', 'dyros_fr3_controllers', 'utils')
 sys.path.append(os.path.abspath(utils_path))
 
 from launch_utils import load_yaml  # noqa: E402
@@ -81,7 +81,7 @@ def generate_robot_nodes(context):
             IncludeLaunchDescription(
                 PythonLaunchDescriptionSource(
                     PathJoinSubstitution([
-                        FindPackageShare('kyu_franka_controllers'), 'launch', 'franka.launch.py'
+                        FindPackageShare('dyros_fr3_controllers'), 'launch', 'franka.launch.py'
                     ])
                 ),
                 launch_arguments={
@@ -104,7 +104,7 @@ def generate_robot_nodes(context):
                 namespace=namespace,
                 arguments=[controller_name, '--controller-manager-timeout', '30'],
                 parameters=[PathJoinSubstitution([
-                    FindPackageShare('kyu_franka_controllers'), 'config', "controllers.yaml",
+                    FindPackageShare('dyros_fr3_controllers'), 'config', "controllers.yaml",
 
                 ])],
                 output='screen',
@@ -136,7 +136,7 @@ def generate_launch_description():
         DeclareLaunchArgument(
             'robot_config_file',
             default_value=PathJoinSubstitution([
-                FindPackageShare('kyu_franka_controllers'), 'config', 'franka.config.yaml'
+                FindPackageShare('dyros_fr3_controllers'), 'config', 'franka.config.yaml'
             ]),
             description='Path to the robot configuration file to load',
         ),
