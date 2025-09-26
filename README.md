@@ -8,9 +8,9 @@ colcon build
 source install/setup.bash
 ```
 ### Run
-- Launch example.launch.py with controller_name argument set
+- Launch start_control.launch.py with controller_name argument set
 ```bash
-ros2 launch dyros_fr3_controllers example.launch.py controller_name:=default_controller
+ros2 launch dyros_fr3_controllers start_control.launch.py controller_name:=default_controller
 ```
 ```
     'robot_config_file',
