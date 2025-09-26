@@ -6,11 +6,8 @@ import sys
 from pathlib import Path
 
 PACKAGE_DIR = "dyros_fr3_controllers"
-<<<<<<< HEAD
 SCRIPT_DIR = Path(__file__).resolve().parent
 PACKAGE_PATH = SCRIPT_DIR / PACKAGE_DIR
-=======
->>>>>>> 7b351260e93bbca0a55cfb8b182becb29bb0e326
 
 
 def to_snake(name: str) -> str:
