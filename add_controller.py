@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 
 import argparse
-import os
 import re
 import sys
+from pathlib import Path
 
 PACKAGE_DIR = "dyros_fr3_controllers"
+SCRIPT_DIR = Path(__file__).resolve().parent
+PACKAGE_PATH = SCRIPT_DIR / PACKAGE_DIR
 
 
 def to_snake(name: str) -> str:
@@ -14,23 +16,26 @@ def to_snake(name: str) -> str:
 
 
 def read_file(path: str) -> str:
-    with open(path, "r", encoding="utf-8") as f:
+    path = Path(path)
+    with path.open("r", encoding="utf-8") as f:
         return f.read()
 
 
 def write_file(path: str, content: str) -> None:
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-    with open(path, "w", encoding="utf-8") as f:
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8") as f:
         f.write(content)
 
 
 def append_file(path: str, content: str) -> None:
-    with open(path, "a", encoding="utf-8") as f:
+    path = Path(path)
+    with path.open("a", encoding="utf-8") as f:
         f.write(content)
 
 
 def update_cmakelists(new_src_rel: str) -> None:
-    cmake_path = os.path.join(PACKAGE_DIR, "CMakeLists.txt")
+    cmake_path = PACKAGE_PATH / "CMakeLists.txt"
     content = read_file(cmake_path)
 
     if new_src_rel in content:
@@ -51,7 +56,7 @@ def update_cmakelists(new_src_rel: str) -> None:
 
 
 def update_plugin_xml(controller_class: str) -> None:
-    xml_path = os.path.join(PACKAGE_DIR, f"{PACKAGE_DIR}_plugin.xml")
+    xml_path = PACKAGE_PATH / f"{PACKAGE_DIR}_plugin.xml"
     content = read_file(xml_path)
 
     class_entry = (
@@ -73,7 +78,7 @@ def update_plugin_xml(controller_class: str) -> None:
 
 
 def append_to_controllers_yaml(ctrl_name_snake: str, controller_class: str, control_mode: str) -> None:
-    yaml_path = os.path.join(PACKAGE_DIR, "config", "controllers.yaml")
+    yaml_path = PACKAGE_PATH / "config" / "controllers.yaml"
 
     manager_block = f"""
 /**:
@@ -160,8 +165,8 @@ def _prepare_template(raw: str) -> str:
 
 def generate_from_templates(controller_class: str, control_mode: str) -> None:
     snake = to_snake(controller_class)
-    new_h = os.path.join(PACKAGE_DIR, "include", PACKAGE_DIR, f"{snake}.h")
-    new_cpp = os.path.join(PACKAGE_DIR, "src", f"{snake}.cpp")
+    new_h = PACKAGE_PATH / "include" / PACKAGE_DIR / f"{snake}.h"
+    new_cpp = PACKAGE_PATH / "src" / f"{snake}.cpp"
 
     header_tpl_raw = """#pragma once
 
